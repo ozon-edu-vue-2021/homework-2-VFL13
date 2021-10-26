@@ -19,7 +19,7 @@
               :level="level + 1"
               :index="index"
               :selectedNode="selectedNode"
-              :parentName="node.name"
+              :nodeId="nodeId.concat([[level + 1, index]])"
               @close="closeFolder"
               @update-path="updatePath"
               @set-selected="setSelected"
@@ -33,7 +33,7 @@
               :level="level + 1"
               :index="index"
               :selectedNode="selectedNode"
-              :parentName="node.name"
+              :nodeId="nodeId.concat([[level + 1, index]])"
               @set-selected="setSelected"
               @close="closeFolder"
               @update-path="updatePath"
@@ -47,7 +47,7 @@
             :level="level + 1"
             :index="index"
             :selectedNode="selectedNode"
-            :parentName="node.name"
+            :nodeId="nodeId.concat([[level + 1, index]])"
             @set-selected="setSelected"
             @close="closeFolder"
             @update-path="updatePath"
@@ -88,10 +88,11 @@ export default {
       default: 0
     },
     selectedNode: {
-      type: Object
+      type: Array
     },
-    parentName: {
-      type: String
+    nodeId: {
+      type: Array,
+      default: () => [[0,0]]
     }
   },
   data() {
@@ -113,22 +114,11 @@ export default {
       this.isOpen = !this.isOpen
       this.$emit('update-path',{add: this.isOpen, path: this.isOpen ? this.path : ''})
       if (this.node.contents.length) {
-        this.setSelected({
-          level: this.level + 1,
-          index: 0,
-          name: this.node.contents[0].name,
-          parent: this.node.name
-        })
+        this.setSelected(this.nodeId.concat([[this.level+1,0]]))
       }
       else {
-        this.setSelected({
-          level: this.level,
-          index: this.index,
-          name: this.node.name,
-          parent: this.parentName
-        })
+        this.setSelected(this.nodeId)
       }
-
     },
     // обновляем путь полученный из дочерней ноды
     updatePath(path) {
@@ -143,12 +133,7 @@ export default {
     closeFolder() {
       this.isOpen = !this.isOpen
       this.$emit('update-path',{add: this.isOpen, path: this.isOpen ? this.path : ''})
-      this.setSelected({
-        level: this.level,
-        index: this.index,
-        name: this.node.name,
-        parent: this.parentName
-      })
+      this.setSelected(this.nodeId)
     },
     // toggleNode(path), closeNode(path), moveDown(path), moveUp(path)
     // обрабатываем переход с клавиатуры,
@@ -159,77 +144,51 @@ export default {
     //    если уровень выше дочерних, передаем по имени элемента из пути path
     //    в соответствии с уровнем
     // )
-    toggleNode(path) {
+    toggleNode() {
       if (this.selected) {
         this.clickOnFolder()
       }
       else {
-        if (this.selectedNode.level === this.level + 1) {
-          const ref = this.node.contents[this.selectedNode.index].name
-          this.$refs[ref][0].toggleNode(path)
-        }
-        else if (this.selectedNode.level > this.level + 1) {
-          this.$refs[path[this.level + 1]][0].toggleNode(path)
-        }
+        const ref = this.node.contents[this.selectedNode[this.level + 1][1]].name
+        this.$refs[ref][0].toggleNode()
       }
     },
-    closeNode(path) {
+    closeNode() {
       if (this.selected) {
         this.$emit('close')
       }
       else {
-        if (this.selectedNode.level === this.level + 1) {
-          const ref = this.node.contents[this.selectedNode.index].name
-          this.$refs[ref][0].closeNode(path)
-        }
-        else if (this.selectedNode.level > this.level + 1) {
-          this.$refs[path[this.level + 1]][0].closeNode(path)
-        }
+        const ref = this.node.contents[this.selectedNode[this.level + 1][1]].name
+        this.$refs[ref][0].closeNode()
       }
     },
-    moveDown(path) {
+    moveDown() {
       if (this.selected) {
         if (!this.last) {
-          this.setSelected({
-            level: this.level,
-            index: this.index + 1,
-            name: this.node.name,
-            parent: this.parentName
-          })
+          let lastNode = this.nodeId[this.nodeId.length-1]
+          lastNode = [lastNode[0], lastNode[1]+1]
+          this.setSelected(this.nodeId.slice(0,this.nodeId.length-1).concat([lastNode]))
         }
       }
       else {
-        if (this.selectedNode.level === this.level + 1) {
-          const ref = this.node.contents[this.selectedNode.index].name
-          this.$refs[ref][0].moveDown(path)
-        }
-        else if (this.selectedNode.level > this.level + 1) {
-          this.$refs[path[this.level + 1]][0].moveDown(path)
-        }
+        const ref = this.node.contents[this.selectedNode[this.level + 1][1]].name
+        this.$refs[ref][0].moveDown()
       }
     },
-    moveUp(path) {
+    moveUp() {
       if (this.selected) {
         if (this.index > 0) {
-          this.setSelected({
-            level: this.level,
-            index: this.index - 1,
-            name: this.node.name,
-            parent: this.parentName
-          })
+          let lastNode = this.nodeId[this.nodeId.length-1]
+          lastNode = [lastNode[0], lastNode[1]-1]
+          this.setSelected(this.nodeId.slice(0,this.nodeId.length-1).concat([lastNode]))
         }
         else if (this.index === 0) {
           this.$emit('close')
         }
       }
       else {
-        if (this.selectedNode.level === this.level + 1) {
-          const ref = this.node.contents[this.selectedNode.index].name
-          this.$refs[ref][0].moveUp(path)
-        }
-        else if (this.selectedNode.level > this.level + 1) {
-          this.$refs[path[this.level + 1]][0].moveUp(path)
-        }
+        const ref = this.node.contents[this.selectedNode[this.level + 1][1]].name
+        this.$refs[ref][0].moveUp()
       }
     }
   }
