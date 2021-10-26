@@ -1,10 +1,10 @@
 <template>
   <li @click.stop="updatePath" :class="{'selected': selected}">
     <div class="node">
-              <span>
-                <file-icons class="icon" :file-name="element.name"/>
-              </span>
-      {{ element.name }}
+      <span>
+        <file-icons class="icon" :file-name="node.name"/>
+      </span>
+      {{ node.name }}
     </div>
   </li>
 </template>

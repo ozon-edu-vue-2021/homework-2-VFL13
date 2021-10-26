@@ -7,9 +7,10 @@
       <ul>
         <folder
             ref="root"
-            :node="nodeTree"
+            :node="node"
             :last="true"
             :selectedNode="selectedNode"
+            :parentName="null"
             @update-path="updatePath"
             @set-selected="setSelected"
         />
@@ -22,7 +23,7 @@
 export default {
   name: "tree",
   props: {
-    nodeTree: {
+    node: {
       type: Object,
     },
   },
@@ -36,7 +37,14 @@ export default {
       // selectedNode - выделенная ноды
       // level - уровень вложенности выделенной ноды
       // index - порядковый номер выделенной ноды
-      selectedNode: {level: null, index: null},
+      // name - имя ноды
+      // parent - имя родителя
+      selectedNode: {
+        level: null,
+        index: null,
+        name: null,
+        parent: null,
+      },
     }
   },
   computed: {
@@ -56,11 +64,12 @@ export default {
     },
     handleKeyUp(event) {
       event.preventDefault()
+
       if (event.keyCode === 13 || event.keyCode === 39) {
         // Ждем нажатия "Enter" or "->"
         // Если не выбрана ни одна нода, выбиваем корень
         if (this.selectedNode.level === null) {
-          this.selectedNode = {level: 0, index: 0}
+          this.selectRootNode()
         }
         else {
           // Если выбрана нода, тригерим у корня событие toggleNode
@@ -72,11 +81,16 @@ export default {
         // Ждем нажатия "Escape" or "<-"
         // Если не выбрана ни одна нода, выбиваем корень
         if (this.selectedNode.level === null) {
-          this.selectedNode = {level: 0, index: 0}
+          this.selectRootNode()
         }
         // Если выбрана орневая нода, сбрасываем выделение
         else if (this.selectedNode.level === 0) {
-          this.selectedNode = {level: null, index: null}
+          this.selectedNode = {
+            level: null,
+            index: null,
+            name: null,
+            parent: null,
+          }
         }
         // Если выбрана не корневая нода, тригерим у корня событие closeNode
         // с путем к выбранной ноде
@@ -88,7 +102,7 @@ export default {
         // Ждем нажатия "Arrow Up"
         // Если не выбрана ни одна нода, выбиваем корень
         if (this.selectedNode.level === null) {
-          this.selectedNode = {level: 0, index: 0}
+          this.selectRootNode()
         }
         // Если выбрана нода, тригерим у корня событие moveDown
         // с путем к выбранной ноде
@@ -100,7 +114,7 @@ export default {
         // Ждем нажатия "Arrow Down"
         // Если не выбрана ни одна нода, выбиваем корень
         if (this.selectedNode.level === null) {
-          this.selectedNode = {level: 0, index: 0}
+          this.selectRootNode()
         }
         // Если выбрана нода, тригерим у корня событие moveDown
         // с путем к выбранной ноде
@@ -109,6 +123,14 @@ export default {
         }
       }
     },
+    selectRootNode() {
+      this.selectedNode = {
+        level: 0,
+        index: 0,
+        name: this.node.name,
+        parent: null
+      }
+    }
   },
   mounted () {
     window.addEventListener('keyup', this.handleKeyUp, false)
