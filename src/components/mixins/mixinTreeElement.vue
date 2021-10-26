@@ -10,10 +10,7 @@ export default {
   computed: {
     // Проверяем является ли нода выделенной
     selected() {
-      return this.selectedNode.level === this.level
-          && this.selectedNode.index === this.index
-          && this.selectedNode.parent === this.parentName
-          // && this.selectedNode.name === this.node.name
+      return this.selectedNode ? this.nodeId.flat(2).join('') === this.selectedNode.flat(2).join('') : false
     },
   }
 }

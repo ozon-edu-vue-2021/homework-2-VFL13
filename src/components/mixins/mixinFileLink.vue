@@ -13,15 +13,16 @@ export default {
       type: Number,
       default: 0
     },
-    selectedNode: {
-      type: Object
-    },
     last: {
       type: Boolean,
       default: true,
     },
-    parentName: {
-      type: String
+    selectedNode: {
+      type: Array
+    },
+    nodeId: {
+      type: Array,
+      default: () => [[0,0]]
     }
   },
   methods: {
@@ -29,12 +30,7 @@ export default {
     // Отмечаем ноду как выделенную
     updatePath() {
       this.$emit('update-path',{add: true, path: this.node.name})
-      this.setSelected({
-        level: this.level,
-        index: this.index,
-        name: this.node.name,
-        parent: this.parentName
-      })
+      this.setSelected(this.nodeId)
     },
     // при выборе ноды с клавиатуры, обновление путь к ней, передавая родителю
     // Отмечаем ноду как выделенную
@@ -48,12 +44,9 @@ export default {
     moveDown() {
       if (this.selected) {
         if (!this.last) {
-          this.setSelected({
-            level: this.level,
-            index: this.index + 1,
-            name: this.node.name,
-            parent: this.parentName
-          })
+          let lastNode = this.nodeId[this.nodeId.length-1]
+          lastNode = [lastNode[0], lastNode[1]+1]
+          this.setSelected(this.nodeId.slice(0,this.nodeId.length-1).concat([lastNode]))
         }
       }
     },
@@ -63,12 +56,9 @@ export default {
     moveUp() {
       if (this.selected) {
         if (this.index > 0) {
-          this.setSelected({
-            level: this.level,
-            index: this.index - 1,
-            name: this.node.name,
-            parent: this.parentName
-          })
+          let lastNode = this.nodeId[this.nodeId.length-1]
+          lastNode = [lastNode[0], lastNode[1]-1]
+          this.setSelected(this.nodeId.slice(0,this.nodeId.length-1).concat([lastNode]))
         }
         else if (this.index === 0) {
           this.$emit('close')

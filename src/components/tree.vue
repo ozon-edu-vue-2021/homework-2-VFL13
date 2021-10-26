@@ -9,8 +9,8 @@
             ref="root"
             :node="node"
             :last="true"
+            :selectedPath="path"
             :selectedNode="selectedNode"
-            :parentName="null"
             @update-path="updatePath"
             @set-selected="setSelected"
         />
@@ -34,17 +34,9 @@ export default {
   data() {
     return {
       path: '',
-      // selectedNode - выделенная ноды
-      // level - уровень вложенности выделенной ноды
-      // index - порядковый номер выделенной ноды
-      // name - имя ноды
-      // parent - имя родителя
-      selectedNode: {
-        level: null,
-        index: null,
-        name: null,
-        parent: null,
-      },
+      // selectedNode - выделенная ноды, массивом из координат
+      // - последовательность уровня и индекс элемента, первый [0,0]
+      selectedNode: null,
     }
   },
   computed: {
@@ -68,7 +60,7 @@ export default {
       if (event.keyCode === 13 || event.keyCode === 39) {
         // Ждем нажатия "Enter" or "->"
         // Если не выбрана ни одна нода, выбиваем корень
-        if (this.selectedNode.level === null) {
+        if (this.selectedNode === null) {
           this.selectRootNode()
         }
         else {
@@ -80,17 +72,12 @@ export default {
       else if (event.keyCode === 27 || event.keyCode === 37) {
         // Ждем нажатия "Escape" or "<-"
         // Если не выбрана ни одна нода, выбиваем корень
-        if (this.selectedNode.level === null) {
+        if (this.selectedNode === null) {
           this.selectRootNode()
         }
-        // Если выбрана орневая нода, сбрасываем выделение
-        else if (this.selectedNode.level === 0) {
-          this.selectedNode = {
-            level: null,
-            index: null,
-            name: null,
-            parent: null,
-          }
+        // Если выбрана корневая нода, сбрасываем выделение
+        else if (this.selectedNode.flat(2).join('') === '00') {
+          this.selectedNode = null
         }
         // Если выбрана не корневая нода, тригерим у корня событие closeNode
         // с путем к выбранной ноде
@@ -101,7 +88,7 @@ export default {
       else if (event.keyCode === 38) {
         // Ждем нажатия "Arrow Up"
         // Если не выбрана ни одна нода, выбиваем корень
-        if (this.selectedNode.level === null) {
+        if (this.selectedNode === null) {
           this.selectRootNode()
         }
         // Если выбрана нода, тригерим у корня событие moveDown
@@ -113,7 +100,7 @@ export default {
       else if (event.keyCode === 40) {
         // Ждем нажатия "Arrow Down"
         // Если не выбрана ни одна нода, выбиваем корень
-        if (this.selectedNode.level === null) {
+        if (this.selectedNode === null) {
           this.selectRootNode()
         }
         // Если выбрана нода, тригерим у корня событие moveDown
@@ -124,12 +111,7 @@ export default {
       }
     },
     selectRootNode() {
-      this.selectedNode = {
-        level: 0,
-        index: 0,
-        name: this.node.name,
-        parent: null
-      }
+      this.selectedNode = [0,0]
     }
   },
   mounted () {
