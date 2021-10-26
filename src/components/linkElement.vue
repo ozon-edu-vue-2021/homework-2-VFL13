@@ -1,7 +1,7 @@
 <template>
   <li @click.stop="updatePath" :class="{'selected': selected}">
     <div class="node">
-      <a :href="element.target" target="_blank">{{ element.name }}</a>
+      <a :href="node.target" target="_blank">{{ node.name }}</a>
     </div>
   </li>
 </template>

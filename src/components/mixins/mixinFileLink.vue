@@ -2,7 +2,7 @@
 export default {
   name: "mixinFileLink",
   props: {
-    element: {
+    node: {
       type: Object
     },
     level: {
@@ -20,13 +20,21 @@ export default {
       type: Boolean,
       default: true,
     },
+    parentName: {
+      type: String
+    }
   },
   methods: {
     // при клике по ноду, обновление путь к ней, передавая родителю
     // Отмечаем ноду как выделенную
     updatePath() {
-      this.$emit('update-path',{add: true, path: this.element.name})
-      this.setSelected({level: this.level, index: this.index})
+      this.$emit('update-path',{add: true, path: this.node.name})
+      this.setSelected({
+        level: this.level,
+        index: this.index,
+        name: this.node.name,
+        parent: this.parentName
+      })
     },
     // при выборе ноды с клавиатуры, обновление путь к ней, передавая родителю
     // Отмечаем ноду как выделенную
@@ -40,7 +48,12 @@ export default {
     moveDown() {
       if (this.selected) {
         if (!this.last) {
-          this.setSelected({level: this.level, index: this.index + 1})
+          this.setSelected({
+            level: this.level,
+            index: this.index + 1,
+            name: this.node.name,
+            parent: this.parentName
+          })
         }
       }
     },
@@ -50,11 +63,22 @@ export default {
     moveUp() {
       if (this.selected) {
         if (this.index > 0) {
-          this.setSelected({level: this.level, index: this.index - 1})
+          this.setSelected({
+            level: this.level,
+            index: this.index - 1,
+            name: this.node.name,
+            parent: this.parentName
+          })
         }
         else if (this.index === 0) {
           this.$emit('close')
         }
+      }
+    },
+    // при нажатии esc или кнопки влево, переход на уровень назад
+    closeNode() {
+      if (this.selected) {
+        this.$emit('close')
       }
     }
   },

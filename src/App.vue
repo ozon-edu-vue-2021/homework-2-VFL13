@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <tree
-      :nodeTree="$options.nodeTree"
+      :node="$options.nodeTree"
     />
     <scroll-to-top />
   </div>

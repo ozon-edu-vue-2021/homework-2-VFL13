@@ -19,6 +19,7 @@
               :level="level + 1"
               :index="index"
               :selectedNode="selectedNode"
+              :parentName="node.name"
               @close="closeFolder"
               @update-path="updatePath"
               @set-selected="setSelected"
@@ -27,11 +28,12 @@
         <template v-else-if="element.type === 'file'">
           <file-element
               :ref="element.name"
-              :element="element"
+              :node="element"
               :last="isLast(index)"
               :level="level + 1"
               :index="index"
               :selectedNode="selectedNode"
+              :parentName="node.name"
               @set-selected="setSelected"
               @close="closeFolder"
               @update-path="updatePath"
@@ -40,11 +42,12 @@
         <template v-else>
           <link-element
             :ref="element.name"
-            :element="element"
+            :node="element"
             :last="isLast(index)"
             :level="level + 1"
             :index="index"
             :selectedNode="selectedNode"
+            :parentName="node.name"
             @set-selected="setSelected"
             @close="closeFolder"
             @update-path="updatePath"
@@ -86,6 +89,9 @@ export default {
     },
     selectedNode: {
       type: Object
+    },
+    parentName: {
+      type: String
     }
   },
   data() {
@@ -107,10 +113,20 @@ export default {
       this.isOpen = !this.isOpen
       this.$emit('update-path',{add: this.isOpen, path: this.isOpen ? this.path : ''})
       if (this.node.contents.length) {
-        this.setSelected({level: this.level + 1, index: 0})
+        this.setSelected({
+          level: this.level + 1,
+          index: 0,
+          name: this.node.contents[0].name,
+          parent: this.node.name
+        })
       }
       else {
-        this.setSelected({level: this.level, index: this.index})
+        this.setSelected({
+          level: this.level,
+          index: this.index,
+          name: this.node.name,
+          parent: this.parentName
+        })
       }
 
     },
@@ -127,7 +143,12 @@ export default {
     closeFolder() {
       this.isOpen = !this.isOpen
       this.$emit('update-path',{add: this.isOpen, path: this.isOpen ? this.path : ''})
-      this.setSelected({level: this.level, index: this.index})
+      this.setSelected({
+        level: this.level,
+        index: this.index,
+        name: this.node.name,
+        parent: this.parentName
+      })
     },
     // toggleNode(path), closeNode(path), moveDown(path), moveUp(path)
     // обрабатываем переход с клавиатуры,
@@ -169,7 +190,12 @@ export default {
     moveDown(path) {
       if (this.selected) {
         if (!this.last) {
-          this.setSelected({level: this.level, index: this.index + 1})
+          this.setSelected({
+            level: this.level,
+            index: this.index + 1,
+            name: this.node.name,
+            parent: this.parentName
+          })
         }
       }
       else {
@@ -185,7 +211,12 @@ export default {
     moveUp(path) {
       if (this.selected) {
         if (this.index > 0) {
-          this.setSelected({level: this.level, index: this.index - 1})
+          this.setSelected({
+            level: this.level,
+            index: this.index - 1,
+            name: this.node.name,
+            parent: this.parentName
+          })
         }
         else if (this.index === 0) {
           this.$emit('close')
