@@ -1,28 +1,31 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <tree
+      :nodeTree="$options.nodeTree"
+    />
+    <scroll-to-top />
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import nodeTree from '../public/static/node_modules.json'
+import ScrollToTop from "./components/scrollToTop";
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
-  }
+    ScrollToTop,
+    'tree': () => import('./components/tree'),
+  },
+  created() {
+    this.$options.nodeTree = nodeTree
+  },
 }
 </script>
 
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  margin: 0;
+  padding: 0;
 }
 </style>
