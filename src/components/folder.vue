@@ -2,9 +2,8 @@
   <li>
     <div class="node" :class="{'selected': selected}" @click.stop="clickOnFolder">
       <span>
-        <arrow class="arrow" :class="isOpen ? 'rotate':''"></arrow>
-        <open-folder v-if="isOpen" class="icon"/>
-        <close-folder v-else class="icon"/>
+        <Icon class="arrow" name="arrow" :class="isOpen ? 'rotate':''"></Icon>
+        <Icon name="folder" :open="isOpen" class="icon"/>
       </span>
       {{ node.name }}
     </div>
@@ -12,7 +11,7 @@
     <ul v-if="isOpen && node.contents.length" class="directory">
       <div v-for="(element, index) in node.contents" :key="`${index}-${element}`">
         <template v-if="element.type === 'directory'">
-          <folder
+          <Folder
               :ref="element.name"
               :node="element"
               :last="isLast(index)"
@@ -26,7 +25,7 @@
           />
         </template>
         <template v-else-if="element.type === 'file'">
-          <file-element
+          <FileElement
               :ref="element.name"
               :node="element"
               :last="isLast(index)"
@@ -40,7 +39,7 @@
           />
         </template>
         <template v-else>
-          <link-element
+          <LinkElement
             :ref="element.name"
             :node="element"
             :last="isLast(index)"
@@ -59,17 +58,15 @@
 </template>
 
 <script>
-import mixinTreeElement from './mixins/mixinTreeElement'
+import MixinTreeElement from './mixins/mixin-tree-element'
 
 export default {
-  name: "folder",
-  mixins: [mixinTreeElement],
+  name: "Folder",
+  mixins: [MixinTreeElement],
   components: {
-    'arrow': () => import('./icon/arrow'),
-    'close-folder': () => import('./icon/closeFolder'),
-    'open-folder': () => import('./icon/openFolder'),
-    'link-element': () => import('./linkElement'),
-    'file-element': () => import('./fileElement'),
+    'Icon': () => import('./icon'),
+    'LinkElement': () => import('./link-element'),
+    'FileElement': () => import('./file-element'),
   },
   props: {
     node: {
@@ -111,6 +108,7 @@ export default {
     // если закрыта, открываем и выделяем первый элемент в ней
     // если открыта, закрываем и выделяем саму папку
     clickOnFolder() {
+      console.log('On folder', this.isOpen )
       this.isOpen = !this.isOpen
       this.$emit('update-path',{add: this.isOpen, path: this.isOpen ? this.path : ''})
       if (this.node.contents.length) {
@@ -118,6 +116,9 @@ export default {
       }
       else {
         this.setSelected(this.nodeId)
+      }
+      if (!this.isOpen) {
+        this.closeNode()
       }
     },
     // обновляем путь полученный из дочерней ноды

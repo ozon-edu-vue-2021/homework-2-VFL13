@@ -7,11 +7,11 @@
 </template>
 
 <script>
-import mixinTreeElement from './mixins/mixinTreeElement'
-import mixinFileLink from './mixins/mixinFileLink'
+import MixinTreeElement from './mixins/mixin-tree-element'
+import MixinFileLink from './mixins/mixin-file-link'
 
 export default {
-  name: "linkElement",
-  mixins: [mixinTreeElement, mixinFileLink]
+  name: "LinkElement",
+  mixins: [MixinTreeElement, MixinFileLink]
 }
 </script>

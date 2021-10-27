@@ -1,11 +1,14 @@
 <template>
   <div>
     <div class="path">
-      <h3><span><arrow /></span>/{{ path }}</h3>
+      <span><Icon name="arrow" class="icon"/></span>
+      <h3>
+        /{{ path }}
+      </h3>
     </div>
     <div class="tree">
       <ul>
-        <folder
+        <Folder
             ref="root"
             :node="node"
             :last="true"
@@ -13,6 +16,7 @@
             :selectedNode="selectedNode"
             @update-path="updatePath"
             @set-selected="setSelected"
+            @close="selectRootNode"
         />
       </ul>
     </div>
@@ -21,15 +25,15 @@
 
 <script>
 export default {
-  name: "tree",
+  name: "Tree",
   props: {
     node: {
       type: Object,
     },
   },
   components: {
-    'arrow': () => import('./icon/arrow'),
-    'folder': () => import('./folder'),
+    'Icon': () => import('./icon'),
+    'Folder': () => import('./folder'),
   },
   data() {
     return {
@@ -49,6 +53,7 @@ export default {
     updatePath(path) {
       // обновляем путь к выбранной ноде
       this.path = path.path
+      console.log('Click ', 'path ',this.path, 'selec', this.selectedNode)
     },
     setSelected(node) {
       // обновляем level и index выделенной ноды
@@ -60,6 +65,7 @@ export default {
       if (event.keyCode === 13 || event.keyCode === 39) {
         // Ждем нажатия "Enter" or "->"
         // Если не выбрана ни одна нода, выбиваем корень
+        console.log('Enter', this.selectedNode)
         if (this.selectedNode === null) {
           this.selectRootNode()
         }
@@ -112,7 +118,7 @@ export default {
     },
     selectRootNode() {
       this.selectedNode = [0,0]
-    }
+    },
   },
   mounted () {
     window.addEventListener('keyup', this.handleKeyUp, false)
@@ -125,9 +131,23 @@ export default {
 
 <style>
   h3{
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    width: calc(99% - 2rem);
+  }
+  h3:hover{
+    text-overflow: unset;
+    white-space: normal;
+  }
+  span {
     padding-left: 1rem;
+    padding-right: 1rem;
+    display: inline-block;
   }
   .path {
+    display: flex;
+    align-items: center;
     overflow: hidden;
     position: fixed;
     border: solid;
@@ -178,6 +198,7 @@ export default {
   .icon {
     height: 2rem;
     width: 2rem;
+    display: inline;
   }
   .node {
     display:inline-flex;

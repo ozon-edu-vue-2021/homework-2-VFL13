@@ -1,6 +1,6 @@
 <script>
 export default {
-  name: "mixinFileLink",
+  name: "MixinFileLink",
   props: {
     node: {
       type: Object

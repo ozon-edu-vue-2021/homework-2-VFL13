@@ -585,6 +585,31 @@
       <g>
 </g>
 </svg>
+    <svg v-else-if="fileExtension === 'folder' && !open" version="1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" enable-background="new 0 0 48 48">
+      <path fill="#FFA000" d="M40,12H22l-4-4H8c-2.2,0-4,1.8-4,4v8h40v-4C44,13.8,42.2,12,40,12z"/>
+      <path fill="#FFCA28" d="M40,12H8c-2.2,0-4,1.8-4,4v20c0,2.2,1.8,4,4,4h32c2.2,0,4-1.8,4-4V16C44,13.8,42.2,12,40,12z"/>
+    </svg>
+    <svg v-else-if="fileExtension === 'folder' && open" version="1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" enable-background="new 0 0 48 48">
+      <path fill="#FFA000" d="M38,12H22l-4-4H8c-2.2,0-4,1.8-4,4v24c0,2.2,1.8,4,4,4h31c1.7,0,3-1.3,3-3V16C42,13.8,40.2,12,38,12z"/>
+      <path fill="#FFCA28" d="M42.2,18H15.3c-1.9,0-3.6,1.4-3.9,3.3L8,40h31.7c1.9,0,3.6-1.4,3.9-3.3l2.5-14C46.6,20.3,44.7,18,42.2,18z"/>
+    </svg>
+    <svg v-else-if="fileExtension === 'arrow'" width="11px" height="20px" viewBox="0 0 11 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+      <!-- Generator: Sketch 52.5 (67469) - http://www.bohemiancoding.com/sketch -->
+      <title>arrow_forward_ios</title>
+      <desc>Created with Sketch.</desc>
+      <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Rounded" transform="translate(-345.000000, -3434.000000)">
+          <g id="Navigation" transform="translate(100.000000, 3378.000000)">
+            <g id="-Round-/-Navigation-/-arrow_forward_ios" transform="translate(238.000000, 54.000000)">
+              <g>
+                <polygon id="Path" opacity="0.87" points="24 24 0 24 0 0 24 0"></polygon>
+                <path d="M7.38,21.01 C7.87,21.5 8.66,21.5 9.15,21.01 L17.46,12.7 C17.85,12.31 17.85,11.68 17.46,11.29 L9.15,2.98 C8.66,2.49 7.87,2.49 7.38,2.98 C6.89,3.47 6.89,4.26 7.38,4.75 L14.62,12 L7.37,19.25 C6.89,19.73 6.89,20.53 7.38,21.01 Z" id="🔹-Icon-Color" fill="#1D1D1D"></path>
+              </g>
+            </g>
+          </g>
+        </g>
+      </g>
+    </svg>
     <svg v-else version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
          viewBox="0 0 56 56" style="enable-background:new 0 0 56 56;" xml:space="preserve">
 <g>
@@ -627,22 +652,25 @@
       <g>
 </g>
 </svg>
-
   </div>
 </template>
 
 <script>
 export default {
-  name: "fileIcons",
+  name: "Icon",
   props: {
-    fileName: {
+    name: {
       type: String,
       default: ''
+    },
+    open: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
     fileExtension() {
-      return this.fileName.split('.').pop().toLowerCase()
+      return this.name.split('.').pop().toLowerCase()
     }
   }
 }
