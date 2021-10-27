@@ -1,24 +1,28 @@
 <template>
   <div id="app">
-    <tree
-      :node="$options.nodeTree"
+    <Tree
+      :node="nodeTree"
     />
-    <scroll-to-top />
+    <ScrollToTop />
   </div>
 </template>
 
 <script>
 import nodeTree from '../public/static/node_modules.json'
-import ScrollToTop from "./components/scrollToTop";
 
 export default {
   name: 'App',
   components: {
-    ScrollToTop,
-    'tree': () => import('./components/tree'),
+    'ScrollToTop': () => import('./components/scroll-to-top'),
+    'Tree': () => import('./components/tree'),
+  },
+  data() {
+    return {
+      nodeTree: null
+    }
   },
   created() {
-    this.$options.nodeTree = nodeTree
+    this.nodeTree = nodeTree
   },
 }
 </script>

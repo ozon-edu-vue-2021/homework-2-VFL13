@@ -1,14 +1,14 @@
 <template>
   <a @click="scrollTop" v-show="visible" class="bottom-right">
-    <arrow class="icon up"></arrow>
+    <Icon name="arrow" class="icon up"></Icon>
   </a>
 </template>
 
 <script>
-import Arrow from "./icon/arrow";
+import Icon from "./icon";
 export default {
-  name: "scroll-to-top",
-  components: {Arrow},
+  name: "ScrollToTop",
+  components: {Icon},
   data () {
     return {
       visible: false
