@@ -1,6 +1,6 @@
 <template>
-  <li @click.stop="updatePath" :class="{'selected': selected}">
-    <div class="node">
+  <li @click.stop="updatePath">
+    <div class="node" :class="{'selected': selected}">
       <a :href="node.target" target="_blank">{{ node.name }}</a>
     </div>
   </li>

@@ -1,6 +1,6 @@
 <template>
-  <li @click.stop="updatePath" :class="{'selected': selected}">
-    <div class="node">
+  <li @click.stop="updatePath">
+    <div class="node" :class="{'selected': selected}">
       <span>
         <file-icons class="icon" :file-name="node.name"/>
       </span>
