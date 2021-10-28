@@ -108,18 +108,20 @@ export default {
     // если закрыта, открываем и выделяем первый элемент в ней
     // если открыта, закрываем и выделяем саму папку
     clickOnFolder() {
-      console.log('On folder', this.isOpen )
       this.isOpen = !this.isOpen
       this.$emit('update-path',{add: this.isOpen, path: this.isOpen ? this.path : ''})
-      if (this.node.contents.length) {
-        this.setSelected(this.nodeId.concat([[this.level+1,0]]))
+      if (this.isOpen) {
+        if (this.node.contents.length) {
+          this.setSelected(this.nodeId.concat([[this.level+1,0]]))
+        }
+        else {
+          this.setSelected(this.nodeId)
+        }
       }
       else {
         this.setSelected(this.nodeId)
       }
-      if (!this.isOpen) {
-        this.closeNode()
-      }
+
     },
     // обновляем путь полученный из дочерней ноды
     updatePath(path) {
