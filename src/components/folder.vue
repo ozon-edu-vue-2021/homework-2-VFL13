@@ -9,7 +9,7 @@
     </div>
     <!-- Use v-if or v-show -->
     <ul v-if="isOpen && node.contents.length" class="directory">
-      <div v-for="(element, index) in node.contents" :key="`${index}-${element}`">
+      <div v-for="(element, index) in showNode" :key="`${index}-${element}`">
         <template v-if="element.type === 'directory'">
           <Folder
               :ref="element.name"
@@ -90,17 +90,35 @@ export default {
     nodeId: {
       type: Array,
       default: () => [[0,0]]
+    },
+    loadedNode: {
+      type: Number,
+      default: 30
     }
   },
   data() {
     return {
       isOpen: false,
-      path: `${this.node.name}${this.node.type === 'directory' ? '/':''}`
+      path: `${this.node.name}${this.node.type === 'directory' ? '/':''}`,
+      loadedParts: 1
+
     }
   },
   computed: {
     nodesLength() {
       return this.node.contents.length
+    },
+    showNode() {
+      if (this.nodesLength && this.nodesLength > 30) {
+        return this.node.contents.slice(0,this.loadedNode * this.loadedParts)
+      }
+      else {
+        return this.node.contents
+      }
+
+    },
+    triggerNode() {
+      return this.loadedNode > 50 ?  this.loadedNode - 30 : 20
     }
   },
   methods: {
@@ -193,8 +211,40 @@ export default {
         const ref = this.node.contents[this.selectedNode[this.level + 1][1]].name
         this.$refs[ref][0].moveUp()
       }
+    },
+    inViewPort() {
+      if (this.isOpen) {
+        const ref = this.node.contents[this.triggerNode - 1].name
+        // console.log(ref)
+        // console.log(this.$refs[ref][0])
+        // console.log(this.$refs[ref][0].$el.getBoundingClientRect())
+        const rect = this.$refs[ref][0].$el.getBoundingClientRect();
+
+        if (
+            rect.top >= 0 &&
+            rect.left >= 0 &&
+            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && /* or $(window).height() */
+            rect.right <= (window.innerWidth || document.documentElement.clientWidth) /* or $(window).width() */
+        ) {
+          this.loadedParts += 1
+        }
+      }
     }
-  }
+  },
+  mounted () {
+    if (this.nodesLength && this.nodesLength > 30) {
+      window.addEventListener('resize', this.inViewPort, false)
+      window.addEventListener('scroll', this.inViewPort, false)
+      window.addEventListener('touchmove', this.inViewPort, false)
+    }
+  },
+  destroyed () {
+    if (this.nodesLength && this.nodesLength > 30) {
+      window.removeEventListener('resize', this.inViewPort)
+      window.removeEventListener('scroll', this.inViewPort)
+      window.removeEventListener('touchmove', this.inViewPort)
+    }
+  },
 }
 </script>
 

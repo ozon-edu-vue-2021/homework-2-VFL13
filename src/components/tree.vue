@@ -16,7 +16,6 @@
             :selectedNode="selectedNode"
             @update-path="updatePath"
             @set-selected="setSelected"
-
         />
       </ul>
     </div>
