@@ -16,7 +16,7 @@
             :selectedNode="selectedNode"
             @update-path="updatePath"
             @set-selected="setSelected"
-            @close="selectRootNode"
+
         />
       </ul>
     </div>
@@ -53,7 +53,6 @@ export default {
     updatePath(path) {
       // обновляем путь к выбранной ноде
       this.path = path.path
-      console.log('Click ', 'path ',this.path, 'selec', this.selectedNode)
     },
     setSelected(node) {
       // обновляем level и index выделенной ноды
@@ -65,7 +64,6 @@ export default {
       if (event.keyCode === 13 || event.keyCode === 39) {
         // Ждем нажатия "Enter" or "->"
         // Если не выбрана ни одна нода, выбиваем корень
-        console.log('Enter', this.selectedNode)
         if (this.selectedNode === null) {
           this.selectRootNode()
         }
